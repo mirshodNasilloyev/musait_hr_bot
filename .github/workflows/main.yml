@@ -1,4 +1,4 @@
-name: CI/CD Deploy
+name: CI/CD Deployment to Server
 
 on:
   push:
@@ -10,28 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download code
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Go settings
+      - name: Set up Go
         uses: actions/setup-go@v3
         with:
           go-version: 1.23
 
-      - name: Create docker image
-        run: docker build -t musaitHrMgBotGo:latest .
+      - name: Build Docker image
+        run: docker build -t musait_hr_bot:latest .
 
-      - name: Enter into Github Registry
+      - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Add tag into docker image
+      - name: Tag and push Docker image
         run: |
-          docker tag musaitHrMgBotGo:latest ghcr.io/${{ github.repository }}/musaitHrMgBotGo:latest
-          docker push ghcr.io/${{ github.repository }}/musaitHrMgBotGo:latest
+          docker tag musait_hr_bot:latest ghcr.io/${{ github.repository }}/musait_hr_bot:latest
+          docker push ghcr.io/${{ github.repository }}/musait_hr_bot:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -41,20 +41,20 @@ jobs:
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
 
-      - name: Deploying a Docker container to a remote server
+      - name: Deploy Docker container to remote server
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
         run: |
-          # Create docker image and restart server
           sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << EOF
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-            docker pull ghcr.io/${{ github.repository }}/musaitHrMgBotGo:latest
-            docker stop musaitHrMgBotGo || true
-            docker rm musaitHrMgBotGo || true
-            docker run -d --name musaitHrMgBotGo \
+            docker pull ghcr.io/${{ github.repository }}/musait_hr_bot:latest
+            docker stop musait_hr_bot || true
+            docker rm musait_hr_bot || true
+            docker run -d --name musait_hr_bot \
               -e TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }} \
-              ghcr.io/${{ github.repository }}/musaitHrMgBotGo:latest
+              -p 80:80 \
+              ghcr.io/${{ github.repository }}/musait_hr_bot:latest
           EOF

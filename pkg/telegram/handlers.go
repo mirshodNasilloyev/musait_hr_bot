@@ -3,8 +3,8 @@ package telegram
 import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"musaitHrMgBotGo/pkg/repository"
-	"musaitHrMgBotGo/pkg/services"
+	"github.com/mirshodNasilloyev/musait_hr_bot/pkg/repository"
+	"github.com/mirshodNasilloyev/musait_hr_bot/pkg/services"
 )
 
 const (

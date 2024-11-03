@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/boltdb/bolt"
-	"musaitHrMgBotGo/pkg/repository"
+	"github.com/mirshodNasilloyev/musait_hr_bot/pkg/repository"
 	"strconv"
 )
 

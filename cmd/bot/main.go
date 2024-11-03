@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"github.com/boltdb/bolt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/mirshodNasilloyev/musait_hr_bot/pkg/config"
+	"github.com/mirshodNasilloyev/musait_hr_bot/pkg/repository"
+	"github.com/mirshodNasilloyev/musait_hr_bot/pkg/repository/boltdb"
+	"github.com/mirshodNasilloyev/musait_hr_bot/pkg/telegram"
 	"log"
-	"musaitHrMgBotGo/pkg/config"
-	"musaitHrMgBotGo/pkg/repository"
-	"musaitHrMgBotGo/pkg/repository/boltdb"
-	"musaitHrMgBotGo/pkg/telegram"
 )
 
 func main() {
