@@ -1,23 +1,18 @@
+FROM golang:1.23-alpine3.19 AS builder
 
-FROM golang:1.23 AS builder
+COPY . /musaitHrMgBotGo/
+WORKDIR /musaitHrMgBotGo/
 
-WORKDIR /app
-
-# Cache Go modules
-COPY go.mod go.sum ./
 RUN go mod download
-
-COPY . .
-
-RUN go build -o myapp .
+RUN go build -o ./bin/bot cmd/bot/main.go
 
 FROM alpine:latest
 
-WORKDIR /app
+WORKDIR /root/
 
-COPY --from=builder /app/myapp .
-COPY --from=builder /app/configs /app/configs
+COPY --from=0 /musaitHrMgBotGo/bin/bot/ .
+COPY --from=0 /musaitHrMgBotGo/configs/ configs/
 
 EXPOSE 80
 
-CMD ["./myapp"]
+CMD ["./bot"]
