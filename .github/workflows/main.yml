@@ -30,8 +30,8 @@ jobs:
 
       - name: Tag and push Docker image
         run: |
-          docker tag musait_hr_bot:latest ghcr.io/${{ github.repository }}/musait_hr_bot:latest
-          docker push ghcr.io/${{ github.repository }}/musait_hr_bot:latest
+          docker tag musait_hr_bot:latest ghcr.io/mirshodnasilloyev/musait_hr_bot:latest
+          docker push ghcr.io/mirshodnasilloyev/musait_hr_bot:latest
 
   deploy:
     runs-on: ubuntu-latest
