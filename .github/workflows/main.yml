@@ -19,7 +19,7 @@ jobs:
           go-version: 1.23
 
       - name: Create docker image
-        run: docker build -t myapp:latest .
+        run: docker build -t musaitHrMgBotGo:latest .
 
       - name: Enter into Github Registry
         uses: docker/login-action@v2
@@ -30,8 +30,8 @@ jobs:
 
       - name: Add tag into docker image
         run: |
-          docker tag myapp:latest ghcr.io/${{ github.repository }}/myapp:latest
-          docker push ghcr.io/${{ github.repository }}/myapp:latest
+          docker tag musaitHrMgBotGo:latest ghcr.io/${{ github.repository }}/musaitHrMgBotGo:latest
+          docker push ghcr.io/${{ github.repository }}/musaitHrMgBotGo:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -51,10 +51,10 @@ jobs:
           # Create docker image and restart server
           sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << EOF
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-            docker pull ghcr.io/${{ github.repository }}/myapp:latest
-            docker stop myapp || true
-            docker rm myapp || true
-            docker run -d --name myapp \
+            docker pull ghcr.io/${{ github.repository }}/musaitHrMgBotGo:latest
+            docker stop musaitHrMgBotGo || true
+            docker rm musaitHrMgBotGo || true
+            docker run -d --name musaitHrMgBotGo \
               -e TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }} \
-              ghcr.io/${{ github.repository }}/myapp:latest
+              ghcr.io/${{ github.repository }}/musaitHrMgBotGo:latest
           EOF
