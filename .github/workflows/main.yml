@@ -1,0 +1,60 @@
+name: CI/CD Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download code
+        uses: actions/checkout@v2
+
+      - name: Go sozlash
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.20
+
+      - name: Create docker image
+        run: docker build -t myapp:latest .
+
+      - name: Enter into Github Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add tag into docker image
+        run: |
+          docker tag myapp:latest ghcr.io/${{ github.repository }}/myapp:latest
+          docker push ghcr.io/${{ github.repository }}/myapp:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Deploying a Docker container to a remote server
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        run: |
+          # Create docker image and restart server
+          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << EOF
+            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+            docker pull ghcr.io/${{ github.repository }}/myapp:latest
+            docker stop myapp || true
+            docker rm myapp || true
+            docker run -d --name myapp \
+              -e TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }} \
+              ghcr.io/${{ github.repository }}/myapp:latest
+          EOF
