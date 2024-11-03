@@ -16,7 +16,7 @@ jobs:
       - name: Go sozlash
         uses: actions/setup-go@v2
         with:
-          go-version: 1.20
+          go-version: 1.23
 
       - name: Create docker image
         run: docker build -t myapp:latest .
