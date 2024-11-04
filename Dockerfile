@@ -10,8 +10,8 @@ FROM alpine:latest
 
 WORKDIR /root/
 
-COPY --from=0 /github.com/mirshodNasilloyev/musait_hr_bot/bin/bot/ .
-COPY --from=0 /github.com/mirshodNasilloyev/musait_hr_bot/configs/ configs/
+COPY --from=0 /github.com/mirshodNasilloyev/musait_hr_bot/bin/bot .
+COPY --from=0 /github.com/mirshodNasilloyev/musait_hr_bot/configs configs/
 
 EXPOSE 80
 
