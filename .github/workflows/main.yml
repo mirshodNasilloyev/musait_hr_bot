@@ -50,11 +50,11 @@ jobs:
         run: |
           sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << EOF
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-            docker pull ghcr.io/${{ github.repository }}/musait_hr_bot:latest
+            docker pull ghcr.io/mirshodnasilloyev/musait_hr_bot:latest
             docker stop musait_hr_bot || true
             docker rm musait_hr_bot || true
             docker run -d --name musait_hr_bot \
               -e TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }} \
               -p 80:80 \
-              ghcr.io/${{ github.repository }}/musait_hr_bot:latest
+              ghcr.io/mirshodnasilloyev/musait_hr_bot:latest
           EOF
