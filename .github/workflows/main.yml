@@ -56,7 +56,7 @@ jobs:
             # Set env variables
             export TOKEN=${{ secrets.TELEGRAM_TOKEN }}
             docker run -d --name musait_hr_bot \
-              -e TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }} \
+              -e TOKEN=${{ secrets.TELEGRAM_TOKEN }} \
               -p 80:80 \
               ghcr.io/mirshodnasilloyev/musait_hr_bot:latest
           EOF
